@@ -1,10 +1,106 @@
 <html>
 <head>
 <script>
-
+function loaded() {
+	for(var y = 0; y < 8; y++) {
+		for(var x = 0; x < 8; x++) {
+			var obj = document.getElementById("spelplan").children[y].children[x];
+			obj.style.border = "1px solid #000";
+			obj.style.width = "50px";
+			obj.style.height = "50px";
+			obj.style.display = "inline-block";
+			document.getElementById("spelplan").children[y].style.display = "block";
+			
+			obj.id = "y"+y+"x"+x;			// Här skapar vi vad rutan ska heta. Elementets ID. Lättast är att använda ett namn baserat på elementets position på vår spelplan.
+			obj.dataset.xPos = x;			// Vi skapar variabeln xPos på elementet
+			obj.dataset.yPos = y;			// Vi skapar variabeln yPos på elementet
+			obj.dataset.bomb = false;		// Bestämmer att rutan INTE är en bomb.
+			obj.onclick = playSquare;		// Här gör vi så att när vi klickar på rutan så kallar vi på playSquare. Viktigt att bara skriva namnet på funktionen och inte () efter. () efter en funktion skriver man bara när man kallar på den. Här hänvisar vi bara till den.
+			obj.innerHTML = "?";				// Vi skriver ut ett frågetecken på varje ruta
+			obj.style.textAlign = "center";		// Vi centerar texten i varje ruta
+			obj.style.fontSize = "24pt";		// Vi ökar storleken på texten i varje ruta till 24pt (pt är en storlekstyp som är lika stor oberoende på hur stora pixlarna på skärmen är)
+		}
+	}
+	antalBomber = 5;	// Hur många bomber vi vill ha på vår spelplan
+	for(var c = 0; c < antalBomber; c++) {		// Vi kör en loop det antal gånger som vi valt i antalBomber
+		var y = slumpa(8);						// Vi kallar på vår funktion "slumpa" (se rad 36) för att slump en y-koordinat på vår spelplan.
+		var x = slumpa(8);						// Vi gör likadant som förra raden fast för y.
+		if(document.getElementById("y"+y+"x"+x).dataset.bomb == "true") {	// Om den platsen som vi tänker placera vår bomb på redan har en bomb så sänker vi räknaren "c" i vår for-loop (rad 25) med 1. Med andra ord så "tar den om" denna rundan och slumpar fram nya x- och y-koordinater
+			c--;							// minskar c med 1. Vi skriver såhär istället för att skriva "c = c-1"
+		} else {							// Om det inte redan ligger en bomb på vår valda plats så händer följande:
+			document.getElementById("y"+y+"x"+x).dataset.bomb = true;	// Säga att det finns en bomb på elementet
+		}
+	}
+}
+function slumpa(tak) {		// En funktion som slumpar en siffra mellan 0 och variabeln "tak"
+	return Math.floor(Math.random()*(tak));		// Math.ceil avrundar (nedåt) Math.rand() gånger "tak". Funktionen Math.rand() ger ett slumpat tal mellan 0 och 1. Kan då t ex returnera 0.2359871234. Eftersom vi lägger till +1 efter "tak" så kan funktionen returnera ett tal från 0 upp t o m "tak".
+}
+function playSquare() {
+	var o = document.getElementById("y"+this.dataset.yPos+"x"+this.dataset.xPos);
+	var bombs = numberOfBombs(parseInt(this.dataset.xPos), parseInt(this.dataset.yPos));
+	if(this.dataset.bomb == "true") {
+		this.innerHTML = "*";
+	} else {
+		this.innerHTML = bombs;
+	}
+}
+function numberOfBombs(x, y) {
+	var bombs = 0;
+	if(x > 0) {		// Kollar ifall rutan vi klickade på INTE är den första i sidled
+		// Här kollar vi bara rutan som är vänster om den vi klickar på. Och efter if-satsen innan så vet vi att kolumnen inte är den första. Med andra ord xPos är mer än 0 (0 = rad 1)
+		var o = document.getElementById("y"+y+"x"+(x-1));	// SKAPAR o som lagrar en referens till rutan vänster om den vi klickade på. 
+		
+		// Vi måste använda parseInt för att koden ska förstå att vi vill ha värdet i matematisk form (int) istället för i textform (string.)
+		if(o.dataset.bomb == "true") {	
+			bombs++;
+		}
+	} 
+	if(x < 7) {		// Kollar ifall rutan vi klickade på INTE är den första i sidled
+		// Här kollar vi bara rutan som är HÖGER om den vi klickar på. Och efter if-satsen innan så vet vi att kolumnen inte är den första. Med andra ord xPos är mer än 0 (0 = rad 1)
+		var o = document.getElementById("y"+y+"x"+(x+1));	// SKAPAR o som lagrar en referens till rutan HÖGER om den vi klickade på
+		if(o.dataset.bomb == "true") {
+			bombs++;
+		}
+	}
+	if(y > 0) {	// Följande är att vi kollar samma sak fast i y-led.
+		var o = document.getElementById("y"+(y-1)+"x"+x);
+		if(o.dataset.bomb == "true") {
+			bombs++;
+		}
+	} 
+	if(y < 7) {
+		var o = document.getElementById("y"+(y+1)+"x"+x);
+		if(o.dataset.bomb == "true") {
+			bombs++;
+		}
+	}
+	return bombs;
+}
 </script>
 </head>
-<body>
+<body onload="loaded();">
+
+<div id="spelplan">
+<div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+<div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+<div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+<div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+<div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+<div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+<div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+<div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+</div>
+
+
 
 </body>
 </html>
